@@ -16,6 +16,7 @@ var taskDispatcher = require('./dispatcher/taskDispatcher');
 var loginDispatcher = require('./dispatcher/loginDispatcher');
 var path = require('path');
 var session = require('client-sessions');
+var helmet = require('helmet');
 
 // some common utilities
 var respLogger = require('./common/responseLogger');
@@ -39,10 +40,13 @@ app.set('options', options);
 // Register the static html folder. Browser can load html pages under this folder. 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Use Helmet to help secure the app by setting various HTTP headers
+app.use(helmet());
+
 // Register the session. Secret can be an arbitrary string.
 app.use(session({
     cookieName: 'session',
-    secret: 'af*asdf+_)))==asdf afcmnoadfadf',
+    secret: process.env.SESSION_SECRET || 'defaultSecret',
     duration: 30 * 60 * 1000,
     activeDuration: 5 * 60 * 1000,
 }));
